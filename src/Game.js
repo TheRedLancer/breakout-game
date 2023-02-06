@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import Machine from './Machine';
+import Paddle from './Paddle';
 
 class Game { 
     constructor() {
@@ -15,12 +17,27 @@ class Game {
         this.renderer.setClearColor(0xdddddd, 1);
     }
 
-    setup = () => {
+    setup() {
         const gameArea = this.makeGameArea(40, 60);
         this.scene.add(gameArea);
-        this.camera.position.set(0, 0, 40);
-        this.camera.lookAt(gameArea.position.x, 18, gameArea.position.z);
-        this.renderer.render(this.scene, this.camera);
+
+        const paddle = new Paddle(10);
+        this.scene.add(paddle);
+
+        this.cameraSetup(gameArea.position);
+
+        this.machine = new Machine();
+        this.machine.addCallback(() => {
+            paddle.position.x = paddle.position.x += 1;
+            this.renderer.render(this.scene, this.camera);
+        });
+        setTimeout(this.machine.stop, 1000*1.5);
+        setTimeout(this.machine.start, 1000*1);
+    }
+
+    cameraSetup(center) {
+        this.camera.position.set(0, 5, 45);
+        this.camera.lookAt(center.x, 20, center.z);
     }
 
     /**
@@ -28,7 +45,7 @@ class Game {
      * @param {int} width 
      * @param {int} height 
      */
-    makeGameArea = (width, height) => {
+    makeGameArea(width, height) {
         let gameArea = new THREE.Object3D();
         let borderWidth = 3;
 
