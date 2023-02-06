@@ -4,12 +4,12 @@ class Game {
     constructor() {
         this.scene = new THREE.Scene();
         this.renderer = new THREE.WebGLRenderer();
+        
+        let canvas = this.renderer.domElement;
+        document.body.appendChild(canvas);
+        this.renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
 
-        this.canvas = this.renderer.domElement;
-        document.body.appendChild( this.renderer.domElement );
-        this.renderer.setSize( this.canvas.clientWidth, this.canvas.clientHeight );
-
-        this.camera = new THREE.PerspectiveCamera(75, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 1000);
+        this.camera = new THREE.PerspectiveCamera(75, canvas.offsetWidth / canvas.offsetHeight, 0.1, 1000);
         this.scene.add(this.camera);
 
         this.renderer.setClearColor(0xdddddd, 1);
