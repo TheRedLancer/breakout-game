@@ -32,7 +32,6 @@ class Machine {
         this.running = false;
         console.log("stop");
     }
-
 }
 
 export default Machine;

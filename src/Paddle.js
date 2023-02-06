@@ -8,6 +8,11 @@ class Paddle extends THREE.Object3D {
         this.material = new THREE.MeshNormalMaterial();
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.add(this.mesh);
+        this.speed = 1;
+    }
+
+    update(delta_t) {
+        
     }
 }
 

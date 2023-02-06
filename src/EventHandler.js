@@ -1,6 +1,6 @@
 class EventHandler {
     constructor() {
-        this.events = {}
+        this.events = {};
     }
     subscribe(eventName, callback) {
         if (!this.events[eventName]) {
@@ -14,8 +14,10 @@ class EventHandler {
         this.events[eventName] = this.events[eventName].filter(cb => cb != callback);
     }
 
-    dispatch(eventName) {
+    dispatch(eventName, payload) {
         if (!this.events[eventName]) return;
-        this.events[eventName].foreach(cb => cb());
+        this.events[eventName].forEach(cb => cb(payload));
     }
 }
+
+export default EventHandler;

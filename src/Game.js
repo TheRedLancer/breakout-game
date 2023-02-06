@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import EventHandler from './EventHandler';
+import InputListener from './InputListener';
 import Machine from './Machine';
 import Paddle from './Paddle';
 
@@ -15,6 +17,12 @@ class Game {
         this.scene.add(this.camera);
 
         this.renderer.setClearColor(0xdddddd, 1);
+
+        this.machine = new Machine();
+        this.eventHandler = new EventHandler();
+        this.inputListener = new InputListener((arr) => {
+            this.eventHandler.dispatch('inputListener', arr);
+        });
     }
 
     setup() {
@@ -25,19 +33,36 @@ class Game {
         this.scene.add(paddle);
 
         this.cameraSetup(gameArea.position);
-
-        this.machine = new Machine();
-        this.machine.addCallback(() => {
-            paddle.position.x = paddle.position.x += 1;
-            this.renderer.render(this.scene, this.camera);
+        this.renderer.render(this.scene, this.camera);
+        this.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
+            if (isPressed) {
+                console.log("Down " + keyCode);
+            } else {
+                console.log("Up " + keyCode);
+            }
         });
-        setTimeout(this.machine.stop, 1000*1.5);
-        setTimeout(this.machine.start, 1000*1);
+
+        this.machine.addCallback((delta_t) => paddle.update(delta_t));
     }
 
     cameraSetup(center) {
         this.camera.position.set(0, 5, 45);
         this.camera.lookAt(center.x, 20, center.z);
+    }
+
+    start() {
+        this.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
+            if (keyCode == 46 && isPressed) {
+                this.stop();
+            }
+        });
+        this.inputListener.start();
+        this.machine.start();
+    }
+
+    stop() {
+        this.inputListener.stop();
+        this.machine.stop();
     }
 
     /**

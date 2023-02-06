@@ -2,3 +2,4 @@ import Game from './Game';
 
 const game = new Game;
 game.setup();
+game.start();

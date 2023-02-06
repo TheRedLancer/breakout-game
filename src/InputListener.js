@@ -9,13 +9,13 @@ class InputListener {
     }
 
     down(e) {
-        if (this.inputs[keyCode]) return;
+        if (this.inputs[e.keyCode]) return;
         this.inputs[e.keyCode] = true;
         this.caster([e.keyCode, true, this.inputs]);
     }
 
     up(e) {
-        this.inputs[e.keyCode] = true;
+        this.inputs[e.keyCode] = false;
         this.caster([e.keyCode, false, this.inputs]);
     }
 
@@ -29,3 +29,5 @@ class InputListener {
         window.removeEventListener('keyup', this.up.bind(this));
     }
 }
+
+export default InputListener;
