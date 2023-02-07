@@ -5,7 +5,7 @@
   "main": "webpack.config.js",
   "scripts": {
     "dev": "webpack watch --mode=development --config webpack.config.js",
-    "build": "webpack --mode=production --config webpack.config.js"
+    "build": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./pack.ps1"
   },
   "author": "zburnaby",
   "license": "ISC",

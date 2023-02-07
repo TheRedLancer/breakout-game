@@ -13,7 +13,7 @@ class Ball extends THREE.Object3D {
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.add(this.mesh);
         this.speed = 25;
-        this.velocity = new THREE.Vector3(-1, -1, 0);
+        this.velocity = new THREE.Vector3(-1, 1, 0);
         Engine.machine.addCallback((delta_t) => this.update(delta_t));
         Engine.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
             if (isPressed && keyCode === 80) {
@@ -73,7 +73,7 @@ class Ball extends THREE.Object3D {
             Engine.eventHandler.dispatch("gameOver", "The ball fell");
         }
         if (this.velocity.length() === 0) {
-            this.velocity = new THREE.Vector3(-1, -1, 0);
+            this.velocity = new THREE.Vector3(-1, 1, 0);
         }
         this.velocity.setLength(this.speed * delta_t);
         this.position.add(this.velocity);
