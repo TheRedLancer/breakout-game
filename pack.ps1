@@ -4,6 +4,7 @@ $buildBin = "$root\build\bin"
 $buildBinDist = "$root\build\bin\dist"
 $buildZip = "$root\build\zip"
 
+npm i
 npx webpack --mode=production --config webpack.config.js
 
 if (!(Test-Path $buildFolder -PathType Container)) {
