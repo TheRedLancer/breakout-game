@@ -12,25 +12,28 @@ class Machine {
     }
 
     removeCallback(callback) {
-        this.callbacks = this.callbacks.filter(cb => cb != callback)
+        this.callbacks = this.callbacks.filter(cb => cb != callback);
     }
 
-    run = () => {
+    run() {
         if (!this.running) return;
-        this.callbacks.forEach(cb => cb(this.clock.getDelta()));
+        let delta_i = this.clock.getDelta();
+        this.callbacks.forEach(cb => cb(delta_i));
         requestAnimationFrame(this.run.bind(this));
     }
 
-    start = () => {
+    start() {
+        console.log("Machine: start");
         if (this.running) return;
-        this.running = true;
         this.clock.start();
+        this.running = true;
         this.run();
     }
 
-    stop = () => {
+    stop() {
         this.running = false;
-        console.log("stop");
+        this.clock.stop();
+        console.log("Machine: stop");
     }
 }
 

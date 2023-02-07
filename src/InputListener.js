@@ -1,7 +1,13 @@
 class InputListener {
     constructor(caster) {
         this.inputs = {};
-        this.caster = caster || console.log
+        this.caster = caster || console.log;
+        this.down = this.down.bind(this);
+        this.up = this.up.bind(this);
+    }
+
+    setCaster(fn) {
+        this.caster = fn;
     }
 
     isPressed(keyCode) {
@@ -20,13 +26,13 @@ class InputListener {
     }
 
     start() {
-        window.addEventListener('keydown', this.down.bind(this));
-        window.addEventListener('keyup', this.up.bind(this));
+        window.addEventListener('keydown', this.down);
+        window.addEventListener('keyup', this.up);
     }
 
     stop() {
-        window.removeEventListener('keydown', this.down.bind(this));
-        window.removeEventListener('keyup', this.up.bind(this));
+        window.removeEventListener('keydown', this.down);
+        window.removeEventListener('keyup', this.up);
     }
 }
 

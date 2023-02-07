@@ -1,7 +1,6 @@
 import * as THREE from 'three'
-import EventHandler from './EventHandler';
-import InputListener from './InputListener';
-import Machine from './Machine';
+import Ball from './Ball';
+import Engine from './Engine';
 import Paddle from './Paddle';
 
 class Game { 
@@ -18,23 +17,28 @@ class Game {
 
         this.renderer.setClearColor(0xdddddd, 1);
 
-        this.machine = new Machine();
-        this.eventHandler = new EventHandler();
-        this.inputListener = new InputListener((arr) => {
-            this.eventHandler.dispatch('inputListener', arr);
+        Engine.inputListener.setCaster((arr) => {
+            Engine.eventHandler.dispatch('inputListener', arr);
         });
+    }
+
+    main() {
+        this.setup();
+        this.start();
     }
 
     setup() {
         const gameArea = this.makeGameArea(40, 60);
         this.scene.add(gameArea);
 
+        const ball = new Ball(1.5);
+        this.scene.add(ball);
+
         const paddle = new Paddle(10);
         this.scene.add(paddle);
 
         this.cameraSetup(gameArea.position);
-        this.renderer.render(this.scene, this.camera);
-        this.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
+        Engine.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
             if (isPressed) {
                 console.log("Down " + keyCode);
             } else {
@@ -42,7 +46,7 @@ class Game {
             }
         });
 
-        this.machine.addCallback((delta_t) => paddle.update(delta_t));
+        Engine.machine.addCallback(() => {this.renderer.render(this.scene, this.camera)});
     }
 
     cameraSetup(center) {
@@ -51,18 +55,18 @@ class Game {
     }
 
     start() {
-        this.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
-            if (keyCode == 46 && isPressed) {
+        Engine.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
+            if (keyCode === 27 && isPressed) {
                 this.stop();
             }
         });
-        this.inputListener.start();
-        this.machine.start();
+        Engine.inputListener.start();
+        Engine.machine.start();
     }
 
     stop() {
-        this.inputListener.stop();
-        this.machine.stop();
+        Engine.inputListener.stop();
+        Engine.machine.stop();
     }
 
     /**
