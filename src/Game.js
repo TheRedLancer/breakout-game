@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import Ball from './Ball';
+import Block from './Block';
 import Engine from './Engine';
 import Paddle from './Paddle';
 
@@ -28,16 +29,8 @@ class Game {
     }
 
     setup() {
-        const gameArea = this.makeGameArea(40, 60);
-        this.scene.add(gameArea);
+        this.makeLevel();
 
-        const ball = new Ball(1.5);
-        this.scene.add(ball);
-
-        const paddle = new Paddle(10);
-        this.scene.add(paddle);
-
-        this.cameraSetup(gameArea.position);
         Engine.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
             if (isPressed) {
                 console.log("Down " + keyCode);
@@ -45,8 +38,24 @@ class Game {
                 console.log("Up " + keyCode);
             }
         });
+        Engine.machine.addCallback(() => {
+            this.renderer.render(this.scene, this.camera)
+        });
+    }
 
-        Engine.machine.addCallback(() => {this.renderer.render(this.scene, this.camera)});
+    detectCollision() {
+        let ball = this.scene.getObjectByName("ball");
+        let paddle = this.scene.getObjectByName("paddle");
+        if (ball.boundingSphere.intersectsBox(paddle.boundingBox)) {
+            Engine.eventHandler.dispatch("objectCollision", paddle);
+            console.log("Colission");
+        }
+        for (const block of this.scene.getObjectsByProperty("tag", "block")) {
+            if (ball.boundingSphere.intersectsBox(block.boundingBox)) {
+                console.log(block.block_id);
+                Engine.eventHandler.dispatch("objectCollision", block);
+            }
+        }
     }
 
     cameraSetup(center) {
@@ -57,16 +66,50 @@ class Game {
     start() {
         Engine.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
             if (keyCode === 27 && isPressed) {
-                this.stop();
+                this.shutdown();
             }
+            if (keyCode === 8 && isPressed) {
+                Engine.machine.stop();
+            }
+            if (keyCode === 13 && isPressed) {
+                Engine.machine.start();
+            }
+        });
+        Engine.eventHandler.subscribe("gameOver", (message) => {
+            this.shutdown();
+            console.log(message);
         });
         Engine.inputListener.start();
         Engine.machine.start();
+        Engine.machine.addCallback(() => {this.detectCollision()});
     }
 
-    stop() {
+    shutdown() {
         Engine.inputListener.stop();
         Engine.machine.stop();
+    }
+
+    makeLevel() {
+        const gameArea = this.makeGameArea(40, 60);
+        this.scene.add(gameArea);
+
+        const ball = new Ball(1);
+        ball.position.set(0, 10, 0);
+        this.scene.add(ball);
+
+        const paddle = new Paddle(10);
+        this.scene.add(paddle);
+
+        for (let j = 0; j < 4; j++) {
+            for (let i = 0; i < 6; i++) {
+                let newBlock = new Block(5, 3);
+                newBlock.position.set(6 * i - 15, 4 * j + 40, 0);
+                newBlock.setBlockID(i);
+                this.scene.add(newBlock);
+            }
+        }
+
+        this.cameraSetup(gameArea.position);
     }
 
     /**

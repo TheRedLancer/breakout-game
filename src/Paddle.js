@@ -4,8 +4,10 @@ import Engine from './Engine';
 class Paddle extends THREE.Object3D {
     constructor(width) {
         super();
-        this.name = 'player_paddle';
+        this.name = 'paddle';
+        this.tag = 'paddle';
         this.geometry = new THREE.BoxGeometry(width, 1, 1);
+        this.geometry.computeBoundingBox();
         this.material = new THREE.MeshNormalMaterial();
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.add(this.mesh);
@@ -16,9 +18,12 @@ class Paddle extends THREE.Object3D {
                 console.log("Paddle.pos: " + this.position.x);
             }
         });
+        this.boundingBox = new THREE.Box3();
+        this.boundingBox.copy(this.geometry.boundingBox).applyMatrix4(this.mesh.matrixWorld);
     }
 
     update(delta_t) {
+        this.boundingBox.copy(this.geometry.boundingBox).applyMatrix4(this.mesh.matrixWorld);
         if (Engine.inputListener.isPressed(65)) {
             this.position.x = (this.position.x - this.speed * delta_t) > -15 ? (this.position.x - this.speed * delta_t) : -15;
         }
