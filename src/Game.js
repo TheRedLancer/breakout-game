@@ -29,12 +29,22 @@ class Game {
 
     main() {
         this.setup();
-        this.start();
+        Engine.eventHandler.subscribe('inputListener', this.beginGame.bind(this));
+        Engine.eventHandler.dispatch("showMessage", "SPACE TO START");
+        Engine.inputListener.start();
+        this.renderer.render(this.scene, this.camera);
+    }
+
+    beginGame([keyCode, isPressed, keys]) {
+        if (keyCode === 32 && isPressed) {
+            this.start();
+            Engine.eventHandler.unsubscribe('inputListener', this.beginGame);
+            Engine.eventHandler.dispatch("clearMessage", null);
+        }
     }
 
     setup() {
         this.makeLevel();
-
         Engine.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
             if (isPressed) {
                 console.log("Down " + keyCode);
@@ -92,13 +102,13 @@ class Game {
             this.onHitBottomWall();
         });
         Engine.eventHandler.subscribe("gameOver", (message) => {
+            Engine.eventHandler.dispatch("showMessage", message);
             this.shutdown();
             console.log(message);
             this.renderer.render(this.scene, this.camera);
         });
-        Engine.inputListener.start();
-        Engine.machine.start();
         Engine.machine.addCallback(() => {this.detectCollision()});
+        Engine.machine.start();
     }
 
     onHitBottomWall() {

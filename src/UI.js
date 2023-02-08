@@ -21,12 +21,16 @@ class UI extends THREE.Object3D {
             this.score.value += points;
             this.updateScore(null, "SCORE:" + this.score.value);
         });
-        Engine.eventHandler.subscribe("gameOver", (message) => {
-            console.log("gameOverUI");
+        Engine.eventHandler.subscribe("showMessage", (message) => {
+            console.log("showMessageUI");
             this.updateMessage(null, message);
             this.message.geometry.computeBoundingBox();
             this.message.position.set(- 0.5 * ( this.message.geometry.boundingBox.max.x - this.message.geometry.boundingBox.min.x ), 23, 0);
-        })
+        });
+        Engine.eventHandler.subscribe("clearMessage", (message) => {
+            console.log("clearMessageUI");
+            this.message.remove(this.message.mesh);
+        });
         this.add(this.score);
         this.add(this.message);
     }
@@ -35,7 +39,7 @@ class UI extends THREE.Object3D {
         if (font) {
             this.font = font;
         }
-        this.message.remove(this.score.mesh);
+        this.message.remove(this.message.mesh);
         this.message.geometry = new TextGeometry( text, {
             font: this.font,
             size: 3,
