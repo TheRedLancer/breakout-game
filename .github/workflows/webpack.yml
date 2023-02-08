@@ -32,23 +32,23 @@ jobs:
       run: |
         bash ${GITHUB_WORKSPACE}/scripts/build.sh ${GITHUB_WORKSPACE}
 
-    - name: Archive production artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: github-pages
-        path: |
-          build
+    # - name: Archive production artifacts
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: github-pages
+    #     path: |
+    #       build
 
-    - name: Download artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: github-pages
-        path: artifact/file
+    # - name: Download artifact
+    #   uses: actions/download-artifact@v3
+    #   with:
+    #     name: github-pages
+    #     path: artifact/file
 
     - name: Upload to Github Pages
       uses: actions/upload-pages-artifact@v1
       with:
-        path: artifact/file
+        path: build
 
     - name: Deploy to Github Pages
       uses: actions/deploy-pages@v1
