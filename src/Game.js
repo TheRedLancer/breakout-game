@@ -2,7 +2,9 @@ import * as THREE from 'three'
 import Ball from './Ball';
 import Block from './Block';
 import Engine from './Engine';
+import GameArea from './GameArea';
 import Paddle from './Paddle';
+import UI from './UI';
 
 class Game { 
     constructor() {
@@ -21,6 +23,8 @@ class Game {
         Engine.inputListener.setCaster((arr) => {
             Engine.eventHandler.dispatch('inputListener', arr);
         });
+
+        this.score = 0;
     }
 
     main() {
@@ -32,27 +36,29 @@ class Game {
         this.makeLevel();
 
         Engine.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
-            if (isPressed) {
-                console.log("Down " + keyCode);
-            } else {
-                console.log("Up " + keyCode);
-            }
+            // if (isPressed) {
+            //     console.log("Down " + keyCode);
+            // } else {
+            //     console.log("Up " + keyCode);
+            // }
         });
         Engine.machine.addCallback(() => {
-            this.renderer.render(this.scene, this.camera)
+            this.renderer.render(this.scene, this.camera);
         });
     }
 
     detectCollision() {
         let ball = this.scene.getObjectByName("ball");
         let paddle = this.scene.getObjectByName("paddle");
+        let walls = this.scene.getObjectByProperty("tag", "wall")
+        if (walls) {
+            walls.checkCollisions(ball);
+        }
         if (ball.boundingSphere.intersectsBox(paddle.boundingBox)) {
             Engine.eventHandler.dispatch("objectCollision", paddle);
-            console.log("Colission");
         }
         for (const block of this.scene.getObjectsByProperty("tag", "block")) {
             if (ball.boundingSphere.intersectsBox(block.boundingBox)) {
-                console.log(block.block_id);
                 Engine.eventHandler.dispatch("objectCollision", block);
             }
         }
@@ -60,7 +66,7 @@ class Game {
 
     cameraSetup(center) {
         this.camera.position.set(0, 5, 45);
-        this.camera.lookAt(center.x, 20, center.z);
+        this.camera.lookAt(center.x, 18, center.z);
     }
 
     start() {
@@ -75,13 +81,28 @@ class Game {
                 Engine.machine.start();
             }
         });
+        Engine.eventHandler.subscribe("scorePoints", (points) => {
+            this.score += points;
+            if (this.score >= 24) {
+                Engine.eventHandler.dispatch("gameOver", "YOU WIN!");
+            }
+            console.log(this.score);
+        });
+        Engine.eventHandler.subscribe("hitBottomWall", () => {
+            this.onHitBottomWall();
+        });
         Engine.eventHandler.subscribe("gameOver", (message) => {
             this.shutdown();
             console.log(message);
+            this.renderer.render(this.scene, this.camera);
         });
         Engine.inputListener.start();
         Engine.machine.start();
         Engine.machine.addCallback(() => {this.detectCollision()});
+    }
+
+    onHitBottomWall() {
+        Engine.eventHandler.dispatch("gameOver", "GAME OVER");
     }
 
     shutdown() {
@@ -90,7 +111,10 @@ class Game {
     }
 
     makeLevel() {
-        const gameArea = this.makeGameArea(40, 60);
+        let width = 40;
+        let height = 60;
+        const gameArea = new GameArea(width, height);
+        gameArea.position.y = -3;
         this.scene.add(gameArea);
 
         const ball = new Ball(1);
@@ -109,46 +133,10 @@ class Game {
             }
         }
 
+        const ui = new UI(width, height);
+        this.scene.add(ui);
+
         this.cameraSetup(gameArea.position);
-    }
-
-    /**
-     * Creates the 4 walls of the playable area
-     * @param {int} width 
-     * @param {int} height 
-     */
-    makeGameArea(width, height) {
-        let gameArea = new THREE.Object3D();
-        let borderWidth = 3;
-
-        const borderMaterial = new THREE.MeshNormalMaterial(); //{color: 0x00ff00} );
-
-        // top
-        let topGeo = new THREE.BoxGeometry(width + 2 * borderWidth, borderWidth, borderWidth);
-        const topMesh = new THREE.Mesh(topGeo, borderMaterial);
-        topMesh.position.set(0, height + borderWidth / 2, 0);
-        gameArea.add(topMesh);
-
-        // left 
-        let leftGeo = new THREE.BoxGeometry(borderWidth, height, borderWidth);
-        const leftMesh = new THREE.Mesh(leftGeo, borderMaterial);
-        leftMesh.position.set(-(width + borderWidth) / 2, height / 2, 0);
-        gameArea.add(leftMesh);
-
-        // right
-        let rightGeo = new THREE.BoxGeometry(borderWidth, height, borderWidth);
-        const rightMesh = new THREE.Mesh(rightGeo, borderMaterial);
-        rightMesh.position.set((width + borderWidth) / 2, height / 2, 0);
-        gameArea.add(rightMesh);
-
-        // bottom
-        let botGeo = new THREE.BoxGeometry(width + 2 * borderWidth, borderWidth, borderWidth);
-        const botMesh = new THREE.Mesh(botGeo, borderMaterial);
-        botMesh.position.set(0, -borderWidth / 2, 0);
-        gameArea.add(botMesh);
-        
-        gameArea.position.set(0, -3, 0);
-        return gameArea;
     }
 }
 

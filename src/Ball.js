@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { Object3D, Vector2 } from 'three';
 import Engine from './Engine';
 
 class Ball extends THREE.Object3D {
@@ -12,7 +11,7 @@ class Ball extends THREE.Object3D {
         this.material = new THREE.MeshNormalMaterial();
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.add(this.mesh);
-        this.speed = 25;
+        this.speed = 40;
         this.velocity = new THREE.Vector3(-1, 1, 0);
         Engine.machine.addCallback((delta_t) => this.update(delta_t));
         Engine.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
@@ -27,7 +26,7 @@ class Ball extends THREE.Object3D {
 
     /**
      * 
-     * @param {Object3D} other 
+     * @param {THREE.Object3D} other 
      */
     onObjectCollision(other) {
         if (other.tag === "paddle") {
@@ -42,36 +41,33 @@ class Ball extends THREE.Object3D {
         if (other.tag === "block") {
             other.removeFromParent();
             if (this.position.x > other.boundingBox.max.x) {
-                this.velocity.set(Math.abs(this.velocity.x), this.velocity.y, this.velocity.z);
-            } else
-            if (this.position.x < other.boundingBox.min.x) {
-                this.velocity.set(-Math.abs(this.velocity.x), this.velocity.y, this.velocity.z);
-            } else
-            if (this.position.y < other.boundingBox.min.y) {
-                this.velocity.set(this.velocity.x, -Math.abs(this.velocity.y), this.velocity.z);
+                this.velocity.x = Math.abs(this.velocity.x);
+            } else if (this.position.x < other.boundingBox.min.x) {
+                this.velocity.x = -Math.abs(this.velocity.x);
+            } else if (this.position.y < other.boundingBox.min.y) {
+                this.velocity.y = -Math.abs(this.velocity.y);
+            } if (this.position.y > other.boundingBox.max.y) {
+                this.velocity.y = Math.abs(this.velocity.y);
             }
-            if (this.position.y > other.boundingBox.max.y) {
-                this.velocity.set(this.velocity.x, Math.abs(this.velocity.y), this.velocity.z);
-            }
+            Engine.eventHandler.dispatch("scorePoints", 1);
+        }
+        if (other.tag === "topWall") {
+            this.velocity.y = -Math.abs(this.velocity.y);
+        }
+        if (other.tag === "rightWall") {
+            this.velocity.x = -Math.abs(this.velocity.x);
+        }
+        if (other.tag === "leftWall") {
+            this.velocity.x = Math.abs(this.velocity.x);
+        }
+        if (other.tag === "botWall") {
+            Engine.eventHandler.dispatch("hitBottomWall", null);
+            this.velocity = new THREE.Vector3(0, 0, 0);
         }
     }
 
     update(delta_t) {
         this.boundingSphere.copy(this.mesh.geometry.boundingSphere).applyMatrix4(this.mesh.matrixWorld);
-        if (this.position.x >= 19) {
-            this.velocity.reflect(new THREE.Vector3(-1, 0, 0));
-            this.position.x = 18.95;
-        }
-        if (this.position.x <= -19) {
-            this.velocity.reflect(new THREE.Vector3(1, 0, 0));
-            this.position.x = -18.95;
-        }
-        if (this.position.y >= 56) {
-            this.velocity.reflect(new THREE.Vector3(0, -1, 0));
-        }
-        if (this.position.y <= -5) {
-            Engine.eventHandler.dispatch("gameOver", "The ball fell");
-        }
         if (this.velocity.length() === 0) {
             this.velocity = new THREE.Vector3(-1, 1, 0);
         }
