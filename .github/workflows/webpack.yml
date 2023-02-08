@@ -33,6 +33,8 @@ jobs:
         path: |
           build
     - name: Upload to Github Pages
-      uses: actions/upload-pages-artifact@main
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: './build'
     - name: Deploy to Github Pages
-      uses: actions/deploy-pages@main
+      uses: actions/deploy-pages@v1
