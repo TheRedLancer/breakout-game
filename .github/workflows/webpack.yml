@@ -31,3 +31,7 @@ jobs:
         name: build
         path: |
           build
+    - name: Download a single artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: build
