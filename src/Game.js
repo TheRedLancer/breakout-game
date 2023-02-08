@@ -36,11 +36,11 @@ class Game {
         this.makeLevel();
 
         Engine.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
-            // if (isPressed) {
-            //     console.log("Down " + keyCode);
-            // } else {
-            //     console.log("Up " + keyCode);
-            // }
+            if (isPressed) {
+                console.log("Down " + keyCode);
+            } else {
+                console.log("Up " + keyCode);
+            }
         });
         Engine.machine.addCallback(() => {
             this.renderer.render(this.scene, this.camera);
