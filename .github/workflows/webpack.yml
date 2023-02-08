@@ -31,15 +31,24 @@ jobs:
     - name: Build
       run: |
         bash ${GITHUB_WORKSPACE}/scripts/build.sh ${GITHUB_WORKSPACE}
+
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
       with:
         name: github-pages
         path: |
           build
+
+    - name: Download artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: github-pages
+        path: "artifact"
+
     - name: Upload to Github Pages
       uses: actions/upload-pages-artifact@v1
       with:
-        path: './build'
+        path: "artifact"
+
     - name: Deploy to Github Pages
       uses: actions/deploy-pages@v1
