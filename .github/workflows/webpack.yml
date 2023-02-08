@@ -29,6 +29,10 @@ jobs:
     - name: Archive production artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: build
+        name: github-pages
         path: |
           build
+    - name: Upload to Github Pages
+      uses: actions/upload-pages-artifact@v3
+    - name: Deploy to Github Pages
+      uses: actions/deploy-pages
