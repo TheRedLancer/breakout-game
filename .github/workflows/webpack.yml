@@ -35,4 +35,4 @@ jobs:
     - name: Upload to Github Pages
       uses: actions/upload-pages-artifact@v3
     - name: Deploy to Github Pages
-      uses: actions/deploy-pages
+      uses: actions/deploy-pages@v3
