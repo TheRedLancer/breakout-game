@@ -1,5 +1,5 @@
 #!/bin/bash
-rootFolder="."
+rootFolder=$1
 buildFolder="$rootFolder/build"
 buildDist="$rootFolder/build/dist"
 
