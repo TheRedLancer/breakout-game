@@ -23,7 +23,7 @@ class Machine {
     }
 
     start() {
-        console.log("Machine: start");
+        //console.log("Machine: start");
         if (this.running) return;
         this.clock.start();
         this.running = true;
@@ -33,7 +33,13 @@ class Machine {
     stop() {
         this.running = false;
         this.clock.stop();
-        console.log("Machine: stop");
+        //console.log("Machine: stop");
+    }
+
+    clear() {
+        this.callbacks = [];
+        this.running = false;
+        this.clock = new THREE.Clock(true);
     }
 }
 

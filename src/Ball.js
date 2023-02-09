@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import Engine from './Engine';
+import Engine from './Engine/Engine';
 
 class Ball extends THREE.Object3D {
     constructor(width) {
@@ -31,7 +31,9 @@ class Ball extends THREE.Object3D {
     onObjectCollision(other) {
         if (other.tag === "paddle") {
             if (this.position.x > other.boundingBox.min.x && this.position.x < other.boundingBox.max.x) {
-                this.velocity.set(this.velocity.x, Math.abs(this.velocity.y), this.velocity.z);
+                let paddleToBall = new THREE.Vector3().subVectors(new THREE.Vector3().copy(this.position), other.position).normalize();
+                paddleToBall.x = paddleToBall.x / 1.5;
+                this.velocity = paddleToBall;
             } else if (this.position.x < other.boundingBox.min.x) {
                 this.velocity.set(-Math.abs(this.velocity.x), this.velocity.y, this.velocity.z);
             } else {
@@ -61,7 +63,7 @@ class Ball extends THREE.Object3D {
             this.velocity.x = Math.abs(this.velocity.x);
         }
         if (other.tag === "botWall") {
-            Engine.eventHandler.dispatch("hitBottomWall", null);
+            Engine.eventHandler.dispatch("hitBottomWall", this);
             this.velocity = new THREE.Vector3(0, 0, 0);
         }
     }

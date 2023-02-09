@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
-import Engine from '../Engine'
+import Engine from '../Engine/Engine'
 
 export default class MessageUI extends THREE.Object3D {
     constructor(font) {
@@ -9,13 +9,11 @@ export default class MessageUI extends THREE.Object3D {
         this.geometry = null;
         this.mesh = null;
         Engine.eventHandler.subscribe("showMessage", (message) => {
-            console.log("showMessageUI");
             this.updateMessage(message);
             this.geometry.computeBoundingBox();
             this.position.x = - 0.5 * ( this.geometry.boundingBox.max.x - this.geometry.boundingBox.min.x );
         });
         Engine.eventHandler.subscribe("clearMessage", (message) => {
-            console.log("clearMessageUI");
             this.remove(this.mesh);
         });
     }
