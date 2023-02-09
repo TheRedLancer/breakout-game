@@ -4,7 +4,7 @@ import Block from './Block';
 import Engine from './Engine';
 import GameArea from './GameArea';
 import Paddle from './Paddle';
-import UI from './UI';
+import UI from './UI/UI';
 
 class Game { 
     constructor() {
