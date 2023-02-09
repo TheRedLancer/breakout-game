@@ -8,11 +8,6 @@ export default class ScoreUI extends THREE.Object3D {
         this.font = font;
         this.geometry = null;
         this.mesh = null;
-        this.value = 0;
-        Engine.eventHandler.subscribe("scorePoints", (points) => {
-            this.value += points;
-            this.updateScore(this.value);
-        });
     }
 
     updateScore(value) {
