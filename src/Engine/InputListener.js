@@ -34,6 +34,10 @@ class InputListener {
         window.removeEventListener('keydown', this.down);
         window.removeEventListener('keyup', this.up);
     }
+
+    clear() {
+        this.inputs = [];
+    }
 }
 
 export default InputListener;

@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import Engine from './Engine';
+import Engine from './Engine/Engine';
 
 class Paddle extends THREE.Object3D {
     constructor(width) {
@@ -13,11 +13,11 @@ class Paddle extends THREE.Object3D {
         this.add(this.mesh);
         this.speed = 30;
         Engine.machine.addCallback((delta_t) => this.update(delta_t));
-        Engine.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
-            if (isPressed && keyCode === 32) {
-                console.log("Paddle.pos: " + this.position.x);
-            }
-        });
+        // Engine.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
+        //     if (isPressed && keyCode === 32) {
+        //         console.log("Paddle.pos: " + this.position.x);
+        //     }
+        // });
         this.boundingBox = new THREE.Box3();
         this.boundingBox.copy(this.geometry.boundingBox).applyMatrix4(this.mesh.matrixWorld);
     }

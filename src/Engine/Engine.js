@@ -12,6 +12,12 @@ class GameEngine {
     vector3ToString(vec) {
         return "(" + vec.x + ", " + vec.y + ", " + vec.z + ")";
     }
+
+    clear() {
+        this.eventHandler.clear();
+        this.machine.clear();
+        this.inputListener.clear();
+    }
 }
 
 const Engine = new GameEngine();

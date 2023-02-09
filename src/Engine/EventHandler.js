@@ -18,6 +18,10 @@ class EventHandler {
         if (!this.events[eventName]) return;
         this.events[eventName].forEach(cb => cb(payload));
     }
+
+    clear() {
+        this.events = {};
+    }
 }
 
 export default EventHandler;

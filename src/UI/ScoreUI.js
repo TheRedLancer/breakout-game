@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
-import Engine from '../Engine';
+import Engine from '../Engine/Engine';
 
 export default class ScoreUI extends THREE.Object3D {
     constructor(font) {

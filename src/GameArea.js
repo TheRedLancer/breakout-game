@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import Engine from './Engine';
+import Engine from './Engine/Engine';
 import Ball from './Ball';
 
 class GameArea extends THREE.Object3D {
