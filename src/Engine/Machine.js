@@ -33,7 +33,6 @@ class Machine {
     stop() {
         this.running = false;
         this.clock.stop();
-        //console.log("Machine: stop");
     }
 
     clear() {

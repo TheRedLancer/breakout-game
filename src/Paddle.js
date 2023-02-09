@@ -12,12 +12,8 @@ class Paddle extends THREE.Object3D {
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.add(this.mesh);
         this.speed = 30;
-        Engine.machine.addCallback((delta_t) => this.update(delta_t));
-        // Engine.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
-        //     if (isPressed && keyCode === 32) {
-        //         console.log("Paddle.pos: " + this.position.x);
-        //     }
-        // });
+        this.engineUpdate = (delta_t) => this.update(delta_t)
+        Engine.machine.addCallback(this.engineUpdate);
         this.boundingBox = new THREE.Box3();
         this.boundingBox.copy(this.geometry.boundingBox).applyMatrix4(this.mesh.matrixWorld);
     }
@@ -30,6 +26,11 @@ class Paddle extends THREE.Object3D {
         if (Engine.inputListener.isPressed(68) || Engine.inputListener.isPressed(39)) {
             this.position.x = (this.position.x + this.speed * delta_t) < 15 ? (this.position.x + this.speed * delta_t) : 15;
         }
+    }
+
+    destroy() {
+        Engine.machine.removeCallback(this.engineUpdate);
+        this.removeFromParent();
     }
 }
 

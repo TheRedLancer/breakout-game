@@ -68,6 +68,7 @@ class GameArea extends THREE.Object3D {
      * @param {Ball} ball
      */
     checkCollisions(ball) {
+        if (!ball) return;
         if (ball.boundingSphere.intersectsBox(this.topBoundingBox)) {
             Engine.eventHandler.dispatch("objectCollision", this.topBoundingBox);
         }

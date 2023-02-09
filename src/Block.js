@@ -14,7 +14,8 @@ class Block extends THREE.Object3D {
         this.boundingBox = new THREE.Box3();
         this.boundingBox.copy(this.geometry.boundingBox).applyMatrix4(this.mesh.matrixWorld);
         this.block_id = null;
-        Engine.machine.addCallback((delta_t) => this.update(delta_t));
+        this.engineUpdate = (delta_t) => this.update(delta_t)
+        Engine.machine.addCallback(this.engineUpdate);
     }
 
     setBlockID(new_id) {
@@ -23,6 +24,12 @@ class Block extends THREE.Object3D {
 
     update(delta_t) {
         this.boundingBox.copy(this.geometry.boundingBox).applyMatrix4(this.mesh.matrixWorld);
+    }
+
+    destroy() {
+        console.log("Block destroy");
+        Engine.machine.removeCallback(this.engineUpdate);
+        this.removeFromParent();
     }
 
 }

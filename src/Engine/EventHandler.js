@@ -22,6 +22,10 @@ class EventHandler {
     clear() {
         this.events = {};
     }
+
+    clearEvent(event) {
+        this.events[event] = [];
+    }
 }
 
 export default EventHandler;
