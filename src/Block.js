@@ -5,7 +5,8 @@ import Engine from './Engine/Engine';
 class Block extends THREE.Object3D {
     constructor(width, height) {
         super();
-        this.tag = 'block';
+        this.name = "block";
+        this.tag = "block";
         this.geometry = new THREE.BoxGeometry(width, height, 2);
         this.geometry.computeBoundingBox();
         this.material = new THREE.MeshNormalMaterial();
@@ -14,8 +15,9 @@ class Block extends THREE.Object3D {
         this.boundingBox = new THREE.Box3();
         this.boundingBox.copy(this.geometry.boundingBox).applyMatrix4(this.mesh.matrixWorld);
         this.block_id = null;
-        this.engineUpdate = (delta_t) => this.update(delta_t)
+        this.engineUpdate = (delta_t) => this.update(delta_t);
         Engine.machine.addCallback(this.engineUpdate);
+        this.destroy = this.destroy.bind(this);
     }
 
     setBlockID(new_id) {

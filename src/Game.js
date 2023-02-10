@@ -16,7 +16,7 @@ class Game {
         this.renderer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight);
         this.renderer.setClearColor(0xdddddd, 1);
         this.launch = this.launch.bind(this);
-        this.detectCollision = this.detectCollision.bind(this);
+        // this.detectCollision = this.detectCollision.bind(this);
         this.balls = [];
     }
 
@@ -40,7 +40,12 @@ class Game {
         }
     }
 
+    getScene() {
+        return this.scene;
+    }
+
     setup() {
+        Engine.game = this;
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, this.canvas.offsetWidth / this.canvas.offsetHeight, 0.1, 1000);
         this.scene.add(this.camera);
@@ -60,26 +65,26 @@ class Game {
         });
     }
 
-    detectCollision() {
-        let ball = this.scene.getObjectByName("ball");
-        if (!ball) return;
-        let paddle = this.scene.getObjectByName("paddle");
-        let walls = this.scene.getObjectByProperty("tag", "wall");
-        if (ball.boundingSphere.intersectsBox(paddle.boundingBox)) {
-            console.log("paddle", ball);
-            if (ball.position.y < 2) {
-                Engine.eventHandler.dispatch("objectCollision", paddle);
-            }
-        }
-        if (walls) {
-            walls.checkCollisions(ball);
-        }
-        for (const block of this.scene.getObjectsByProperty("tag", "block")) {
-            if (ball.boundingSphere.intersectsBox(block.boundingBox)) {
-                Engine.eventHandler.dispatch("objectCollision", block);
-            }
-        }
-    }
+    // detectCollision() {
+    //     let ball = this.scene.getObjectByName("ball");
+    //     if (!ball) return;
+    //     let paddle = this.scene.getObjectByName("paddle");
+    //     let walls = this.scene.getObjectByProperty("tag", "wall");
+    //     if (ball.boundingSphere.intersectsBox(paddle.boundingBox)) {
+    //         //console.log("paddle", ball);
+    //         if (ball.position.y < 2) {
+    //             Engine.eventHandler.dispatch("objectCollision", paddle);
+    //         }
+    //     }
+    //     if (walls) {
+    //         walls.checkCollisions(ball);
+    //     }
+    //     for (const block of this.scene.getObjectsByProperty("tag", "block")) {
+    //         if (ball.boundingSphere.intersectsBox(block.boundingBox)) {
+    //             Engine.eventHandler.dispatch("objectCollision", block);
+    //         }
+    //     }
+    // }
 
     start() {
         // Start/Stop controls
@@ -118,7 +123,7 @@ class Game {
         });
         Engine.machine.start();
         Engine.eventHandler.dispatch("gameStart", null);
-        Engine.machine.addCallback(this.detectCollision);
+        // Engine.machine.addCallback(this.detectCollision);
     }
 
     reset() {
@@ -134,7 +139,7 @@ class Game {
     }
 
     onHitBottomWall(ball) {
-        console.log("OnHitBottomWall", ball);
+        //console.log("OnHitBottomWall", ball);
         if (this.lives > 0) {
             this.balls = this.balls.filter(b => b != ball);
             ball.destroy();

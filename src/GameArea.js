@@ -6,6 +6,7 @@ class GameArea extends THREE.Object3D {
     constructor(width, height) {
         super();
         let borderWidth = 3;
+        this.name = "game_area"
         this.tag = "wall";
         const borderMaterial = new THREE.MeshNormalMaterial(); //{color: 0x00ff00} );
 
