@@ -16,17 +16,20 @@ class Game {
         this.renderer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight);
         this.renderer.setClearColor(0xdddddd, 1);
         this.launch = this.launch.bind(this);
-        // this.detectCollision = this.detectCollision.bind(this);
         this.balls = [];
     }
 
     main() {
-        Engine.inputListener.setCaster((arr) => {
-            Engine.eventHandler.dispatch('inputListener', arr);
+        Engine.inputListener.setCaster(([keyCode, isPressed, inputs]) => {
+            Engine.eventHandler.dispatch('inputListener', {
+                keyCode: keyCode,
+                isPressed: isPressed,
+                inputs: inputs
+            });
         });
         this.setup();
         Engine.eventHandler.subscribe('inputListener', this.launch);
-        Engine.eventHandler.dispatch("showMessage", "SPACE TO START");
+        Engine.eventHandler.dispatch("showMessage", {message: "SPACE TO START"});
         Engine.inputListener.start();
         this.renderer.render(this.scene, this.camera);
     }
@@ -35,7 +38,7 @@ class Game {
         if (keyCode === 32 && isPressed) {
             Engine.eventHandler.unsubscribe('inputListener', this.launch);
             console.log(Engine.eventHandler.events);
-            Engine.eventHandler.dispatch("clearMessage", null);
+            Engine.eventHandler.dispatch("clearMessage", {});
             this.start();
         }
     }
@@ -53,8 +56,8 @@ class Game {
         this.lives = 3;
         this.balls = [];
         this.makeLevel();
-        // Engine.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
-        //     if (isPressed) {
+        // Engine.eventHandler.subscribe('inputListener', (p) => {
+        //     if (p.isPressed) {
         //         console.log("Down " + keyCode);
         //     } else {
         //         console.log("Up " + keyCode);
@@ -65,64 +68,43 @@ class Game {
         });
     }
 
-    // detectCollision() {
-    //     let ball = this.scene.getObjectByName("ball");
-    //     if (!ball) return;
-    //     let paddle = this.scene.getObjectByName("paddle");
-    //     let walls = this.scene.getObjectByProperty("tag", "wall");
-    //     if (ball.boundingSphere.intersectsBox(paddle.boundingBox)) {
-    //         //console.log("paddle", ball);
-    //         if (ball.position.y < 2) {
-    //             Engine.eventHandler.dispatch("objectCollision", paddle);
-    //         }
-    //     }
-    //     if (walls) {
-    //         walls.checkCollisions(ball);
-    //     }
-    //     for (const block of this.scene.getObjectsByProperty("tag", "block")) {
-    //         if (ball.boundingSphere.intersectsBox(block.boundingBox)) {
-    //             Engine.eventHandler.dispatch("objectCollision", block);
-    //         }
-    //     }
-    // }
-
     start() {
         // Start/Stop controls
-        Engine.eventHandler.subscribe('inputListener', ([keyCode, isPressed, keys]) => {
-            if (keyCode === 27 && isPressed) {
+        Engine.eventHandler.subscribe('inputListener', (p) => {
+            if (p.keyCode === 27 && p.isPressed) {
                 Engine.machine.stop();
             }
-            if (keyCode === 82 && isPressed) {
+            if (p.keyCode === 82 && p.isPressed) {
                 this.reset();
             }
         });
         // Score points
-        Engine.eventHandler.subscribe("scorePoints", (points) => {
-            this.score += points;
+        Engine.eventHandler.subscribe("scorePoints", (p) => {
+            this.score += p.points;
             this.ui.score.updateScore(this.score);
             if (this.score >= 24) {
-                Engine.eventHandler.dispatch("gameOver", "   YOU WIN!\n\"R\" to restart");
+                Engine.eventHandler.dispatch("gameOver", {message: "   YOU WIN!\n\"R\" to restart"});
             }
         });
-        Engine.eventHandler.subscribe("gameStart", () => {
+        Engine.eventHandler.subscribe("gameStart", (p) => {
             this.lives -= 1;
             this.lifeCounter.setLives(this.lives);
             this.balls[0].start();
         });
-        Engine.eventHandler.subscribe("hitBottomWall", (ball) => {
-            this.onHitBottomWall(ball);
+        Engine.eventHandler.subscribe("hitBottomWall", (p) => {
+            this.onHitBottomWall(p.ball);
         });
-        Engine.eventHandler.subscribe("takeDamage", (damage) => {
-            this.lives -= damage;
+        Engine.eventHandler.subscribe("takeDamage", (p) => {
+            this.lives -= p.damage;
             this.lifeCounter.setLives(this.lives);
         });
-        Engine.eventHandler.subscribe("gameOver", (message) => {
-            Engine.eventHandler.dispatch("showMessage", message);
+        Engine.eventHandler.subscribe("gameOver", (p) => {
+            Engine.eventHandler.dispatch("showMessage", {message: p.message});
             Engine.machine.stop();
             this.renderer.render(this.scene, this.camera);
         });
         Engine.machine.start();
-        Engine.eventHandler.dispatch("gameStart", null);
+        Engine.eventHandler.dispatch("gameStart", {});
         // Engine.machine.addCallback(this.detectCollision);
     }
 
@@ -143,7 +125,7 @@ class Game {
         if (this.lives > 0) {
             this.balls = this.balls.filter(b => b != ball);
             ball.destroy();
-            Engine.eventHandler.dispatch("takeDamage", 1);
+            Engine.eventHandler.dispatch("takeDamage", {damage: 1});
             const newBall = new Ball(1);
             newBall.position.set(0, 10, 0);
             this.balls.push(newBall);
@@ -151,7 +133,7 @@ class Game {
             this.renderer.render(this.scene, this.camera);
             newBall.start();
         } else {
-            Engine.eventHandler.dispatch("gameOver", "  GAME OVER\n\"R\" to restart");
+            Engine.eventHandler.dispatch("gameOver", {message: "  GAME OVER\n\"R\" to restart"});
         }
     }
 

@@ -38,9 +38,7 @@ class Ball extends THREE.Object3D {
             this.velocity.reflect(other.face.normal);
         }
         if (other.object.parent.name === "block") {
-            //other.parent.destroy();
             this.velocity.reflect(other.face.normal);
-            Engine.eventHandler.dispatch("scorePoints", 1);
         }
         if (other.object.parent.name === "game_area") {
             this.velocity.reflect(other.face.normal);
@@ -61,7 +59,7 @@ class Ball extends THREE.Object3D {
         let rc = new THREE.Raycaster(new THREE.Vector3().copy(this.position), new THREE.Vector3().copy(this.velocity).normalize(), 0, this.speed * 2 * delta_t);
         let intersected = rc.intersectObjects(objects, true);
         for (const other of intersected) {
-            Engine.eventHandler.dispatch("ballCollision", [this, other]);
+            Engine.eventHandler.dispatch("ballCollision", {ball: this, other: other});
         }
     }
 
