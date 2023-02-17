@@ -24,7 +24,7 @@
 
 ## hitBottomWall
     {
-
+        ball: Ball
     }
 
 ## takeDamage
@@ -35,7 +35,7 @@
 ## ballCollision
     {
         ball: Ball,
-        other: {
+        collider: {
             distance: float, 
             point: Vector3, 
             face: Object, 

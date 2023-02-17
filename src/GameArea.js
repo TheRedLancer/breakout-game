@@ -15,9 +15,7 @@ class GameArea extends THREE.Object3D {
         topGeo.computeBoundingBox();
         this.topMesh = new THREE.Mesh(topGeo, borderMaterial);
         this.topMesh.position.set(0, height + borderWidth / 2, 0);
-        this.topBoundingBox = new THREE.Box3();
-        this.topBoundingBox.copy(this.topMesh.geometry.boundingBox).applyMatrix4(this.topMesh.matrixWorld);
-        this.topBoundingBox.tag = "topWall";
+        this.topMesh.name = "top_wall";
         this.add(this.topMesh);
 
         // left 
@@ -25,9 +23,7 @@ class GameArea extends THREE.Object3D {
         leftGeo.computeBoundingBox();
         this.leftMesh = new THREE.Mesh(leftGeo, borderMaterial);
         this.leftMesh.position.set(-(width + borderWidth) / 2, height / 2, 0);
-        this.leftBoundingBox = new THREE.Box3();
-        this.leftBoundingBox.copy(this.leftMesh.geometry.boundingBox).applyMatrix4(this.leftMesh.matrixWorld);
-        this.leftBoundingBox.tag = "leftWall";
+        this.leftMesh.name = "left_wall";
         this.add(this.leftMesh);
 
         // right
@@ -35,9 +31,7 @@ class GameArea extends THREE.Object3D {
         rightGeo.computeBoundingBox();
         this.rightMesh = new THREE.Mesh(rightGeo, borderMaterial);
         this.rightMesh.position.set((width + borderWidth) / 2, height / 2, 0);
-        this.rightBoundingBox = new THREE.Box3();
-        this.rightBoundingBox.copy(this.rightMesh.geometry.boundingBox).applyMatrix4(this.rightMesh.matrixWorld);
-        this.rightBoundingBox.tag = "rightWall";
+        this.rightMesh.name = "right_wall";
         this.add(this.rightMesh);
 
         // bottom
@@ -45,23 +39,8 @@ class GameArea extends THREE.Object3D {
         botGeo.computeBoundingBox();
         this.botMesh = new THREE.Mesh(botGeo, borderMaterial);
         this.botMesh.position.set(0, -borderWidth / 2, 0);
-        this.botBoundingBox = new THREE.Box3();
-        this.botBoundingBox.copy(this.botMesh.geometry.boundingBox).applyMatrix4(this.botMesh.matrixWorld);
-        this.botBoundingBox.tag = "botWall";
+        this.botMesh.name = "bot_wall";
         this.add(this.botMesh);
-
-        Engine.machine.addCallback((delta_t) => this.update(delta_t));
-    }
-
-    update(delta_t) {
-        this.updateBoundingBoxes();
-    }
-
-    updateBoundingBoxes() {
-        this.topBoundingBox.copy(this.topMesh.geometry.boundingBox).applyMatrix4(this.topMesh.matrixWorld);
-        this.leftBoundingBox.copy(this.leftMesh.geometry.boundingBox).applyMatrix4(this.leftMesh.matrixWorld);
-        this.rightBoundingBox.copy(this.rightMesh.geometry.boundingBox).applyMatrix4(this.rightMesh.matrixWorld);
-        this.botBoundingBox.copy(this.botMesh.geometry.boundingBox).applyMatrix4(this.botMesh.matrixWorld);
     }
 
     /**
