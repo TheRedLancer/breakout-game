@@ -12,7 +12,7 @@ class Game {
     constructor() {
         this.renderer = new THREE.WebGLRenderer();
         this.canvas = this.renderer.domElement;
-        document.body.appendChild(this.canvas);
+        document.getElementById("c").appendChild(this.canvas);
         this.renderer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight);
         this.renderer.setClearColor(0xdddddd, 1);
         this.launch = this.launch.bind(this);
@@ -57,13 +57,13 @@ class Game {
         this.lives = 3;
         this.balls = [];
         this.makeLevel();
-        Engine.eventHandler.subscribe('inputListener', (payload) => {
-            // if (payload.isPressed) {
-            //     console.log("Down " + payload.keyCode);}
-            // else {
-            //     console.log("Up " + keyCode);
-            // }
-        });
+        // Engine.eventHandler.subscribe('inputListener', (payload) => {
+        //     if (payload.isPressed) {
+        //         console.log("Down " + payload.keyCode);}
+        //     else {
+        //         console.log("Up " + keyCode);
+        //     }
+        // });
         Engine.machine.addCallback(() => {
             this.renderer.render(this.scene, this.camera);
         });
