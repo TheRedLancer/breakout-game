@@ -7,6 +7,7 @@ class GameEngine {
         this.eventHandler = new EventHandler()
         this.machine = new Machine();
         this.inputListener = new InputListener();
+        this.game = undefined;
     }
 
     vector3ToString(vec) {

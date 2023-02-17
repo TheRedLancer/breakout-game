@@ -8,12 +8,12 @@ export default class MessageUI extends THREE.Object3D {
         this.font = font;
         this.geometry = null;
         this.mesh = null;
-        Engine.eventHandler.subscribe("showMessage", (message) => {
-            this.updateMessage(message);
+        Engine.eventHandler.subscribe("showMessage", (payload) => {
+            this.updateMessage(payload.message);
             this.geometry.computeBoundingBox();
             this.position.x = - 0.5 * ( this.geometry.boundingBox.max.x - this.geometry.boundingBox.min.x );
         });
-        Engine.eventHandler.subscribe("clearMessage", (message) => {
+        Engine.eventHandler.subscribe("clearMessage", (payload) => {
             this.remove(this.mesh);
         });
     }
