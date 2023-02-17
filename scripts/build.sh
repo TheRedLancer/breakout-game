@@ -1,5 +1,11 @@
 #!/bin/bash
 rootFolder=$1
+
+if [ "$rootFolder" == "" ]; then
+   echo "ERROR: Please provide a path to the folder containing \"index.html\""
+   exit 1
+fi
+cd $rootFolder
 buildFolder="$rootFolder/build"
 buildDist="$rootFolder/build/dist"
 
@@ -12,6 +18,6 @@ fi
 if [ ! -d "$buildDist" ]; then
     mkdir $buildDist
 fi
-cp $rootFolder/index.html $buildFolder
-cp $rootFolder/style.css $buildFolder
-cp $rootFolder/dist/* $buildDist
+cp ./index.html $buildFolder
+cp ./style.css $buildFolder
+cp ./dist/* $buildDist
